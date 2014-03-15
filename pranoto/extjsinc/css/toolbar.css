@@ -1,0 +1,12 @@
+.slider_tb_btn_new{
+	background-image:url('images/icn_tb_new.gif');
+}
+.slider_tb_btn_edit{
+	background-image:url('images/icn_tb_edit.gif');
+}
+.slider_tb_btn_delete{
+	background-image:url('images/icn_tb_delete.gif');
+}
+.upload-icon{
+	background-image:url('images/image_add.png');
+}

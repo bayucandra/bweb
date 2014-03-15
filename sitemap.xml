@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+
+<url>
+  <loc>http://www.indonesiabamboofurniture.com</loc>
+  <changefreq>daily</changefreq>
+  <priority>1.00</priority>
+</url>
+<url>
+  <loc>http://www.indonesiabamboofurniture.com/home.html</loc>
+  <changefreq>daily</changefreq>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>http://www.indonesiabamboofurniture.com/page/about.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>http://www.indonesiabamboofurniture.com/products.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.95</priority>
+</url>
+<url>
+  <loc>http://www.indonesiabamboofurniture.com/products/Divider.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.90</priority>
+</url>
+<url>
+  <loc>http://www.indonesiabamboofurniture.com/products/Living Room.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.90</priority>
+</url>
+<url>
+  <loc>http://www.indonesiabamboofurniture.com/products/Bedroom.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.90</priority>
+</url>
+<url>
+  <loc>http://www.indonesiabamboofurniture.com/products/Dining Room.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.90</priority>
+</url>
+<url>
+  <loc>http://www.indonesiabamboofurniture.com/catalog.html</loc>
+  <changefreq>monthly</changefreq>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>http://www.indonesiabamboofurniture.com/page/contact.html</loc>
+  <changefreq>monthly</changefreq>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>http://www.indonesiabamboofurniture.com/page/link.html</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.64</priority>
+</url>
+</urlset>
