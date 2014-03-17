@@ -155,7 +155,7 @@ Ext.onReady(function(){
 
     slider_panel_view=Ext.create('Ext.Panel', {
         id: 'panel-view',
-	overflowY:'auto',
+		overflowY:'auto',
         frame: true,
         collapsible: false,
         width: 600,

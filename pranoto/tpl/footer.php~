@@ -1,0 +1,11 @@
+
+	<script type="text/javascript" src="extjs/ext-all.js"></script>
+	<script type="text/javascript" src="../include/ckeditor/ckeditor.js"></script>
+	{$extjson_session}
+	{$extjs_app}
+<section id="error_handler" class="column" style="margin:auto;">
+{$error_message}
+</section>
+</body>
+
+</html>

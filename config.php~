@@ -12,7 +12,7 @@
 	define("APP_FOLDER","");
 	//define("PATH_LIBS",$_SERVER['DOCUMENT_ROOT' ]."/libs/include");//DEVELOPEMENT MODE
 	define("PATH_LIBS","./include");//RUNNING MODE
-
+	
 	//define("PATH_LIBS_HTML","../libs/include");//DEVELOPMENT MODES
 // 	define("PATH_LIBS_HTML","include");//SERVER READY MODE
 	define("PATH_LIBS_CSS_GENERAL",serialize(
