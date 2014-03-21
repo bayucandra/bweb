@@ -20,6 +20,7 @@
 			<li class="icn_photo"><a href="?act=slider">Slider</a></li>
 			<li class="icn_edit_article"><a href="?act=pages">Pages</a></li>
 			<li class="icn_categories"><a href="?act=products">Products</a></li>
+			<li class="icn_tags"><a href="?act=tools">Tools</a></li>
 		</ul>
 		<h3>Users And Account</h3>
 		<ul class="toggle">

@@ -1,17 +1,17 @@
-<?php /* Smarty version Smarty-3.1.14, created on 2014-03-15 14:01:42
+<?php /* Smarty version Smarty-3.1.14, created on 2014-03-20 09:37:45
          compiled from "./tpl/theme1/header.php" */ ?>
-<?php /*%%SmartyHeaderCode:21318316125323fad6acefb6-48025590%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+<?php /*%%SmartyHeaderCode:335160204532a5479325543-84843233%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
   'file_dependency' => 
   array (
     '119742a33085e29d1caa3e854bad7666f18257ce' => 
     array (
       0 => './tpl/theme1/header.php',
-      1 => 1394158778,
+      1 => 1395127358,
       2 => 'file',
     ),
   ),
-  'nocache_hash' => '21318316125323fad6acefb6-48025590',
+  'nocache_hash' => '335160204532a5479325543-84843233',
   'function' => 
   array (
   ),
@@ -36,17 +36,19 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   ),
   'has_nocache_code' => false,
   'version' => 'Smarty-3.1.14',
-  'unifunc' => 'content_5323fad6b62f47_97597848',
+  'unifunc' => 'content_532a54793f2131_87978788',
 ),false); /*/%%SmartyHeaderCode%%*/?>
-<?php if ($_valid && !is_callable('content_5323fad6b62f47_97597848')) {function content_5323fad6b62f47_97597848($_smarty_tpl) {?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<?php if ($_valid && !is_callable('content_532a54793f2131_87978788')) {function content_532a54793f2131_87978788($_smarty_tpl) {?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb#">
 <head profile="http://gmpg.org/xfn/11">
-<title><?php echo $_smarty_tpl->tpl_vars['site_title']->value;?>
+	<title><?php echo $_smarty_tpl->tpl_vars['site_title']->value;?>
 </title>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
-<meta name="keywords" content="bamboo furniture, bamboo set, bamboo indonesia, bamboo exporter, bamboo dining room, bamboo bedroom, bamboo divider"></meta>
-<meta name="description" content="We have the best quality of bamboo furnitures products. Unique design and strong construction made by experienced crafter in the bamboo crafting for many years. We export to most country in the world."></meta>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+	<meta name="keywords" content="bamboo furniture, bamboo set, bamboo indonesia, bamboo exporter, bamboo dining room, bamboo bedroom, bamboo divider"></meta>
+	<meta name="description" content="We have the best quality of bamboo furnitures products. Unique design and strong construction made by experienced crafter in the bamboo crafting for many years. We export to most country in the world."></meta>
+	<link rel="canonical" href="http://indonesiabamboofurniture.com/" />
+	<link rel="canonical" href="http://indonesiabamboofurniture.com/home.html" />
 	<link rel="stylesheet" href="include/nivo-slider/themes/default/default.css" type="text/css" media="screen" />
 
 	<link rel="stylesheet" href="include/nivo-slider/nivo-slider.css" type="text/css" media="screen" />

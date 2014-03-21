@@ -10,7 +10,7 @@ header('Last-Modified: '.gmdate('D, d M Y H:i:s', filemtime($img_path)).' GMT', 
 
 $img_size=$_GET['sz'];
 
-header("content-type: image/jpg");
+// header("content-type: image/jpg");
 return image_resize($img_path,$img_size,array(
 		"no_pic"=>"images/nopicture.jpg"
 	)

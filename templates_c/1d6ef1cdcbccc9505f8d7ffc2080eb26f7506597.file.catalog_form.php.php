@@ -1,17 +1,17 @@
-<?php /* Smarty version Smarty-3.1.14, created on 2014-03-15 09:40:55
-         compiled from "./tpl/catalog_form.php" */ ?>
-<?php /*%%SmartyHeaderCode:1324265615323bdb78bdf83-54557298%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+<?php /* Smarty version Smarty-3.1.14, created on 2014-03-20 09:07:49
+         compiled from "/media/sda3/Projects/Web/bamboo/tpl/theme1/catalog_form.php" */ ?>
+<?php /*%%SmartyHeaderCode:1437448746532a4d75544916-76421786%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
   'file_dependency' => 
   array (
-    'e51fae10efa38421e84ed6f305f5604c5c2ac336' => 
+    '1d6ef1cdcbccc9505f8d7ffc2080eb26f7506597' => 
     array (
-      0 => './tpl/catalog_form.php',
+      0 => '/media/sda3/Projects/Web/bamboo/tpl/theme1/catalog_form.php',
       1 => 1384402876,
       2 => 'file',
     ),
   ),
-  'nocache_hash' => '1324265615323bdb78bdf83-54557298',
+  'nocache_hash' => '1437448746532a4d75544916-76421786',
   'function' => 
   array (
   ),
@@ -24,9 +24,9 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   ),
   'has_nocache_code' => false,
   'version' => 'Smarty-3.1.14',
-  'unifunc' => 'content_5323bdb79d0792_39870475',
+  'unifunc' => 'content_532a4d755eebd3_17194164',
 ),false); /*/%%SmartyHeaderCode%%*/?>
-<?php if ($_valid && !is_callable('content_5323bdb79d0792_39870475')) {function content_5323bdb79d0792_39870475($_smarty_tpl) {?>	<?php echo $_smarty_tpl->tpl_vars['error_messages']->value;?>
+<?php if ($_valid && !is_callable('content_532a4d755eebd3_17194164')) {function content_532a4d755eebd3_17194164($_smarty_tpl) {?>	<?php echo $_smarty_tpl->tpl_vars['error_messages']->value;?>
 
 	<br /><span class="ftimes f 13" style="margin-top:10px;">Please fill form below in order to receive copy of our catalog. The fields with asterisk marks <span class="fred">(*)</span> are required to be filled.</span>
 	<form action="<?php echo $_smarty_tpl->tpl_vars['php_self']->value;?>

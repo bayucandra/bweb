@@ -70,7 +70,7 @@
 
 	<header id="header">
 		<hgroup>
-			<h1 class="site_title"><a href="javascript:void(0);">Website Admin</a></h1>
+			<h1 class="site_title"><a href="javascript:void(0);">Web Admin</a></h1>
 			<h2 class="section_title">{$header_title}</h2><div class="btn_view_site"><a href="../">View Site</a></div>
 		</hgroup>
 	</header> <!-- end of header bar -->

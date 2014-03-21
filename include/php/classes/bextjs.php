@@ -4,6 +4,9 @@
 		function __construct($p_db_link){
 			$this->db_link=$p_db_link;
 		}
+		public function log_insert($p_str){
+			log_insert($this->db_link,$p_str);
+		}
 		public function slider_image_list(){
 			$images=array();
 			$qry_slider_image="SELECT * FROM `slider` ORDER BY `short_order`";
@@ -188,10 +191,11 @@
 			if(isset($_REQUEST["id_pg"]))
 				$filter_id_pg=" WHERE p.idproduct_group=".$_REQUEST['id_pg'];
 			$product_list=array();
-			$qry_product_list="SELECT p.idproduct,p.code,p.name,p.idproduct_group,pg.description AS group_name
+			$qry_product_list="SELECT p.idproduct,p.code,p.name,p.idproduct_group,pg.description AS group_name,RAND() AS img_rand
 				FROM product p
 				LEFT JOIN product_group pg ON(p.idproduct_group=pg.idproduct_group)
 				$filter_id_pg
+				ORDER BY p.idproduct DESC
 				LIMIT $start,$limit";
 			$res_product_list=mysql_query($qry_product_list,$this->db_link);
 			
@@ -200,144 +204,313 @@
 			$fa_count_products=mysql_fetch_assoc($res_count_products);
 			$num_products=$fa_count_products['num_products'];
 			while($fa_product_list=mysql_fetch_assoc($res_product_list)){
-				$product_list[]=array('idproduct'=>$fa_product_list["idproduct"],'code'=>$fa_product_list["code"],'name'=>$fa_product_list["name"],'idproduct_group'=>$fa_product_list["idproduct_group"],'group_name'=>$fa_product_list["group_name"]);
+				$product_list[]=array('idproduct'=>$fa_product_list["idproduct"],'code'=>$fa_product_list["code"],'name'=>$fa_product_list["name"],'idproduct_group'=>$fa_product_list["idproduct_group"],'group_name'=>$fa_product_list["group_name"],'img_rand'=>$fa_product_list["img_rand"]);
 			}
 			$o=array('product_list'=>$product_list,'totalCount'=>$num_products);
 			return json_encode($o);
 		}
 		public function product_upload($p_upload_path,$p_img_max_dim){
-
-			$db_error="";
-			//BEGIN GET PRODUCT GROUP DESC===================================================
-			$idproduct_group=$_REQUEST['idproduct_group'];
-			$product_group_description='undefined';
-			$qry_product_group="SELECT * FROM product_group WHERE idproduct_group=$idproduct_group LIMIT 1";
-			$res_product_group=mysql_query($qry_product_group,$this->db_link);
-			if(!$res_product_group)
-				$db_error.="[line:217]".mysql_error();
-			$fa_product_group=mysql_fetch_assoc($res_product_group);
-			$product_group_description=$fa_product_group["description"];
-			//END GET PRODUCT GROUP DESC************************************
-			$slider_image_element_name='product_image';
-			$product_image_file=$_FILES[$slider_image_element_name];
-			$msg_notification="";
-			$image_error="";
-			$image_size=0;
-			if(!empty($product_image_file['tmp_name']))
-				$image_size=getimagesize($product_image_file['tmp_name']);
-			$new_file_name=$_REQUEST['product_name'];
-			$base_path=$p_upload_path."/$product_group_description";
-			$image_path=$base_path."/".$_REQUEST['product_name'].".jpg";
-
-			if($_REQUEST['input_mode']=='new'){//NEW
-				//BEGIN DB INSERT OPERATION=============================================
-				$qry_add_product="INSERT INTO `product`(`code`,`name`,`idproduct_group`)
-					SELECT '".$_REQUEST['product_code']."','".$_REQUEST['product_name']."','".$_REQUEST['idproduct_group']."'
-				";
-				mysql_query("BEGIN",$this->db_link);
-				$res_add_product=mysql_query($qry_add_product,$this->db_link);
-				$msg_notification.=" Added successfully";
-				if(!$res_add_product)
-					$db_error.="[line:241]".mysql_error();
-				//END DB INSERT OPERATION*************************************
+			switch($_REQUEST['input_mode']){
+				case "new":
+					return json_encode($this->product_upload_new());
+					break;
+				case "edit":
+					return json_encode($this->product_upload_edit());
+					break;
 			}
-
-			$last_product_name="";
+		}//End function slider_image_upload
+		private function product_upload_new(){
+			$ret_arr=array();
+			$arr_state=array("db_error"=>false,"db_message"=>"","img_error"=>false,"img_message"=>"");
+			
+			$idproduct_group=$_REQUEST['idproduct_group'];
+// 			$idproduct=$_REQUEST["idproduct"];
+			$product_code=$_REQUEST["product_code"];
+			$product_name=$_REQUEST["product_name"];
+			$product_group_description=$this->get_product_group_desc($idproduct_group);
+			
+			$new_base_path=$this->path_image_product_base()."/".$product_group_description;
+			$new_image_path=$new_base_path."/".$_REQUEST['product_name'].".jpg";
+			//BEGIN INSERT DATA==========================
+			mysql_query("BEGIN",$this->db_link);
+				$qry_add_product="INSERT INTO `product`(`code`,`name`,`idproduct_group`)
+					SELECT '".$product_code."','".$product_name."','".$idproduct_group."'";
+				$res_add_product=mysql_query($qry_add_product,$this->db_link);
+				if(!$res_add_product){
+					$arr_state['db_error']=true;
+					$arr_state['db_message']="Error when inserting data: ".mysql_error($this->db_link);
+				}else{
+					//BEGIN UPLOADING IMAGE====================
+					$product_image_file=$_FILES['product_image'];
+					if(!empty($product_image_file['tmp_name'])&&($product_image_file['tmp_name']!='none')){
+						$dir_base_path=true;
+						if(!file_exists($new_base_path)){//IF FOLDER NOT EXIST PROCEDURE BEFORE UPLOAD
+							if(!mkdir($new_base_path,0777,true)){
+								$dir_base_path=false;
+								$arr_state["img_error"]=true;
+								$arr_state["img_message"].="Error when creating directory for product image";
+							}
+						}
+						if($dir_base_path){
+							//BEGIN IMAGE VALIDATION VARIABLES==========================
+							$image_size=getimagesize($product_image_file['tmp_name']);
+							$image_error_msg=get_image_upload_error($product_image_file['error']);
+							
+							$is_image_valid=($image_size[0]!=0)&&($image_size[1]!=0);
+							$is_image_no_error=empty($image_error_msg);
+							$is_image_jpeg=preg_match("/.jpg/i",$product_image_file["name"]);
+							//END IMAGE VALIDATION VARIABLES************************
+							if($is_image_valid&&$is_image_no_error&&$is_image_jpeg){
+								$product_upload_process=image_resize($product_image_file['tmp_name'],SIZE_IMAGE_PRODUCTS, array("str_dest_path"=>$new_image_path));
+								if(!$product_upload_process){
+									$arr_state['img_error']=true;
+									$arr_state['img_message'].="Error when uploading image to the destination path";
+								}
+							}else{
+								$arr_state['img_error']=true;
+								if(!$is_image_valid)$arr_state['img_message'].="The image you have uploaded is not valid.";
+								if(!$is_image_no_error)$arr_state['img_message'].=$image_error_msg;
+								if(!$is_image_jpeg)$arr_state['img_message'].="Please upload JPEG file only";
+							}
+						}
+					}else{
+						$arr_state['img_error']=true;
+						$arr_state['img_message']="Please don't left image field empty.";
+					}
+					//END UPLOADING IMAGE********************
+				}
+			if($arr_state['db_error']||$arr_state['img_error'])
+				mysql_query("ROLLBACK",$this->db_link);
+			else
+				mysql_query("COMMIT",$this->db_link);
+			//END INSERT DATA********************
+			
+			//BEGIN RETURN===============================
+			if($arr_state['db_error']||$arr_state['img_error']){
+				return array("success"=>false,"message"=>"There is error when adding new product. Message: ".$arr_state['db_message']."-".$arr_state['img_message']);
+			}else{
+				return array("success"=>true,"message"=>"Success adding new product.");
+			}
+			//END RETURN*********************************
+		}
+		private function product_upload_edit(){
+			$ret_arr=array();
+			$arr_state=array("db_error"=>false,"db_message"=>"","img_error"=>false,"img_message"=>"");
+			
+			$idproduct_group=$_REQUEST['idproduct_group'];
 			$idproduct=$_REQUEST["idproduct"];
 			$product_code=$_REQUEST["product_code"];
 			$product_name=$_REQUEST["product_name"];
-			$idproduct_group=$_REQUEST["idproduct_group"];
-			if($_REQUEST['input_mode']=='edit'){//EDIT
-				//BEGIN GET CURRENT DATA===========================
-				$qry_product="SELECT * FROM `product` WHERE idproduct=$idproduct";
-				$res_product=mysql_query($qry_product,$this->db_link);
+			
+			$product_group_description=$this->get_product_group_desc($idproduct_group);
+			$new_base_path=$this->path_image_product_base()."/".$product_group_description;
+			$new_image_path=$new_base_path."/".$_REQUEST['product_name'].".jpg";
+			
+			//BEGIN GET CURRENT DATA===========================
+			$qry_product="SELECT * FROM `product` WHERE idproduct=$idproduct";
+			$res_product=mysql_query($qry_product,$this->db_link);
+			$old_product_name="";
+			$old_idproduct_group=-1;
+			if(!$res_product){
+				$arr_state["db_error"]=true;
+				$arr_state["db_message"]="Error when trying to get last product name:".mysql_error($this->db_link);
+			}else{
 				$fa_product=mysql_fetch_assoc($res_product);
-				$last_product_name=$fa_product["name"];
-				//END GET CURRENT DATA*******************************
-				//BEGIN UPDATE WITH NEW DATA=================================
-				$qry_edit_product="UPDATE `product` SET `code`='$product_code',`name`='$product_name',`idproduct_group`=$idproduct_group WHERE `idproduct`=$idproduct LIMIT 1";
-				mysql_query("BEGIN",$this->db_link);
+				$old_product_name=$fa_product["name"];
+				$old_idproduct_group=$fa_product["idproduct_group"];
+			}
+			$old_product_group_description=$this->get_product_group_desc($old_idproduct_group);
+			$old_base_path=$this->path_image_product_base()."/".$old_product_group_description;
+			$old_image_path=$old_base_path."/".$old_product_name.".jpg";
+			//END GET CURRENT DATA*******************************
+			//BEGIN UPDATE WITH NEW DATA=================================
+			$qry_edit_product="UPDATE `product` SET `code`='$product_code',`name`='$product_name',`idproduct_group`=$idproduct_group WHERE `idproduct`=$idproduct LIMIT 1";
+
+			mysql_query("BEGIN",$this->db_link);
 				$res_edit_product=mysql_query($qry_edit_product,$this->db_link);
-				$msg_notification.=" Edited successfully";
-				if(!$res_edit_product)
-					$db_error.="[line:263]".mysql_error();
-				//END UPDATE WITH NEW DATA**********************************
-			}
-			if(!empty($product_image_file['error'])){
-				switch($product_image_file['error']){
-					case '1':
-						$image_error = 'The uploaded file exceeds the upload_max_filesize directive in php.ini';
-						break;
-					case '2':
-						$image_error = 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form';
-						break;
-					case '3':
-						$image_error = 'The uploaded file was only partially uploaded';
-						break;
-					case '4':
-						if($_REQUEST['input_mode']=='new')
-							$image_error = 'No file was uploaded.';
-
-						if($_REQUEST['input_mode']=='edit')
-							@rename($base_path."/".$last_product_name.".jpg",$base_path."/".$product_name.".jpg");
-						break;
-
-					case '6':
-						$image_error = 'Missing a temporary folder';
-						break;
-					case '7':
-						$image_error = 'Failed to write file to disk';
-						break;
-					case '8':
-						$image_error = 'File upload stopped by extension';
-						break;
-					case '999':
-						$image_error = "Unknown error of image";
-						break;
-					default:
-						$image_error = 'No error code avaiable';
-						break;
+				if(!$res_edit_product){
+					$arr_state['db_error']=true;
+					$arr_state['db_message']="Error when updating product:".mysql_error($this->db_link);
+				}else{
+					if($old_image_path!=$new_image_path){//CHANGE THE CATEGORY DIRECTORY
+						if(file_exists($old_image_path)){
+							$new_base_path_exist=true;
+							if(!file_exists($new_base_path)){
+								if(!mkdir($new_base_path,0777,true))
+									$new_base_path_exist=false;
+							}
+							if($new_base_path_exist){
+								rename($old_image_path,$new_image_path);
+							}else{
+								$arr_state['img_error']=true;
+								$arr_state['message'].="Error, can not move image to new category.";
+							}
+						}
+					}else{
+						//BEGIN UPLOADING IMAGE==================
+						$product_image_file=$_FILES['product_image'];
+						if(!empty($product_image_file['tmp_name'])&&($product_image_file['tmp_name']!='none')){//IF USER SET IMAGE TO UPLOAD AT INPUT FIELD
+							$dir_base_path=true;
+							if(!file_exists($new_base_path)){//IF FOLDER NOT EXIST PROCEDURE BEFORE UPLOAD
+								if(!mkdir($new_base_path,0777,true)){
+									$dir_base_path=false;
+									$arr_state["img_error"]=true;
+									$arr_state["img_message"].="Error when creating directory for product image";
+								}
+							}
+							if($dir_base_path){
+								//BEGIN IMAGE VALIDATION VARIABLES=================
+								$image_size=getimagesize($product_image_file['tmp_name']);
+								$image_error_msg=get_image_upload_error($product_image_file['error']);
+								
+								$is_image_valid=($image_size[0]!=0)&&($image_size[1]!=0);
+								$is_image_no_error=empty($image_error_msg);
+								$is_image_jpeg=preg_match("/.jpg/i",$product_image_file['name']);
+								//END IMAGE VALIDATION VARIABLES**************
+								if($is_image_no_error&&$is_image_valid&&$is_image_jpeg){
+									@unlink($old_image_path);//Deleting old image
+									$product_upload_process=image_resize($product_image_file["tmp_name"],SIZE_IMAGE_PRODUCTS, array("str_dest_path"=>$new_image_path));
+									@unlink($product_image_file);//delete temporary image file
+									if(!$product_upload_process){
+										$arr_state['img_error']=true;
+										$arr_state['img_message'].="Error when uploading image to the destination path.";
+									}
+								}else{
+									$arr_state['img_error']=true;
+									if(!$is_image_no_error)$arr_state['img_message'].=$image_error_msg;
+									if(!$is_image_valid)$arr_state['img_message'].="The image you have uploaded is not valid.";
+									if(!$is_image_jpeg)$arr_state['img_message'].="Please upload JPEG file only.";
+								}
+							}
+						}
+						//END UPLOADING IMAGE************************
+					}
 				}
-			}elseif((empty($product_image_file['tmp_name']) || ($product_image_file['tmp_name'] == 'none'))
-				&&($_REQUEST['input_mode']=='new')){//IF No file uploaded not allowed for new input
-				$image_error = 'No file was uploaded..';
-			}elseif(($image_size[0]==0)||($image_size[1]==0)){
-				$image_error="File is not correct photo/image format!!!";
-			}elseif(!preg_match("/.jpg/i",$_FILES[$slider_image_element_name]['name'])){
-				$image_error="Please upload JPEG only";
-			}elseif($db_error!=""){
-				$image_error.="Error Before upload, while inserting `product` data. Message: ".$db_error;
-			}elseif(empty($product_image_file['tmp_name'])||($product_image_file['tmp_name']=="none")){
-				$msg_notification.="No Image selected to upload.";
-			}else{//IF NO ERROR AND HAVE FILE TO UPLOAD START UPLOADING IMAGE
-				if($_REQUEST['input_mode']=='edit')//IF Editing, delete old image first
-					@unlink($base_path."/".$last_product_name.".jpg");
-				$tmp_path=$product_image_file['tmp_name'];
-				$product_upload_copy=image_resize($tmp_path,$p_img_max_dim,array("str_dest_path"=>$image_path));
-				@unlink($product_image_file);
-				if(!$product_upload_copy){
-					$image_error.="Error when try creating uploaded image to the server";
-				}
-			}
-
-			//BEGIN: ERROR OR SUCCESS===================================
-			$all_error="";
-			if($image_error!=""){//IF ERROR
-				$all_error=$image_error;
+			if($arr_state['img_error']||$arr_state['db_error'])//BEGIN COMMIT / ROLLBACK
 				mysql_query("ROLLBACK",$this->db_link);
-			}else{//IF SUCCESS
+			else
+				mysql_query("COMMIT",$this->db_link);
+			
+			//END UPDATE WITH NEW DATA**********************************
+			
+			//BEGIN RETURN======================
+			if($arr_state['db_error']||$arr_state['img_error']){
+				return array("success"=>false,"message"=>"There is error when editing product. Message :".$arr_state['db_message']."-".$arr_state['img_message']);
+			}else{
+				return array("success"=>true,"message"=>"Success editing product");
+			}
+			//END RETURN*************************
+		}
+		public function product_group_input(){
+			switch($_REQUEST['input_mode']){
+				case "new":
+					return json_encode($this->product_group_new());
+					break;
+				case "edit":
+					return json_encode($this->product_group_edit());
+					break;
+				case "delete":
+					return json_encode($this->product_group_delete());
+					break;
+			}
+		}
+		private function get_product_group_desc($p_idpg){
+			$qry_product_group="SELECT `description` FROM `product_group` WHERE `idproduct_group`=$p_idpg LIMIT 1";
+			$res_product_group=mysql_query($qry_product_group);
+			if(!$res_product_group){
+				log_insert($this->db_link,"Error when getting product group:".mysql_error());
+				return false;
+			}
+			$fa_product_group=mysql_fetch_assoc($res_product_group);
+			return $fa_product_group['description'];
+		}
+		private function path_image_product_base(){
+			return PATH_IMAGE_PRODUCTS;
+		}
+		private function product_group_new(){
+			$ret_arr=array();
+			$new_failed=false;
+			$msg_failed="Error when trying insert product group:";
+			$group_description=$_REQUEST['description'];
+			
+			mysql_query("BEGIN",$this->db_link);
+				$qry_new_product_group="INSERT INTO `product_group`(`description`,`parent`)VALUES('$group_description',0)";
+				$res_new_product_group=mysql_query($qry_new_product_group,$this->db_link);
+				if(!$res_new_product_group){
+					$new_failed=true;
+					$msg_failed.=mysql_error();
+				}else{
+					$group_product_dir=$this->path_image_product_base()."/".$group_description;
+					if(!mkdir($group_product_dir)){
+						$new_failed=true;
+						$msg_failed.="Failed when try creating directory ".$group_product_dir.".";
+					}
+				}
+			if($new_failed){
+				$ret_arr=array("success"=>false,"message"=>$msg_failed);
+				mysql_query("ROLLBACK",$this->db_link);
+			}else{
+				$ret_arr=$ret_arr=array("success"=>true,"message"=>$group_description);
 				mysql_query("COMMIT",$this->db_link);
 			}
-			
-			if(empty($all_error)){//IF SUCCESS
-					return json_encode(array(
-						"success" => true,
-						"message" => $new_file_name.$msg_notification
-					));
-			}else{//IF ERROR
-					return '{success:false, message:"'.$image_error.'"}';
+			return $ret_arr;
+		}
+		private function product_group_edit(){
+			$idproduct_group=$_REQUEST['idproduct_group'];
+			$group_description=$_REQUEST['description'];
+			//BEGIN GET OLD DESCRIPTION===========================
+			$old_description=$this->get_product_group_desc($idproduct_group);
+			//END GET OLD DESCRIPTION**********************
+			mysql_query("BEGIN",$this->db_link);
+			$edit_failed=false;
+			$qry_edit_product_group="UPDATE `product_group` SET `description`='$group_description'
+				WHERE `idproduct_group`=$idproduct_group
+				LIMIT 1";
+			$res_edit_product_group=mysql_query($qry_edit_product_group,$this->db_link);
+			$ret_arr=array();
+			if(!$res_edit_product_group){
+				$edit_failed=true;
+				$ret_arr=array("success"=>false,"message"=>"Error when trying edit product group".mysql_error());
+			}else{
+				if(file_exists($this->path_image_product_base().'/'.$old_description)){
+					if(!rename($this->path_image_product_base().'/'.$old_description,$this->path_image_product_base().'/'.$group_description))//IF Rename failed
+						$edit_failed=true;
+				}
+				$ret_arr=array("success"=>true,"message"=>$group_description);
 			}
-			//END: ERROR OR SUCCESS*******************************
-		}//End function slider_image_upload
+			if($edit_failed)
+				mysql_query("ROLLBACK",$this->db_link);
+			else
+				mysql_query("COMMIT",$this->db_link);
+			return $ret_arr;
+		}
+		private function product_group_delete(){
+			$ret_arr=array();
+			$idproduct_group=$_REQUEST["idproduct_group"];
+			$product_group_description=$this->get_product_group_desc($idproduct_group);
+			if(!$product_group_description){
+				return array("success"=>false,"message"=>"Error when getting group description:".mysql_error());
+			}
+			
+			$del_failed=false;
+			mysql_query("BEGIN",$this->db_link);
+			$qry_product_group_del="DELETE FROM `product_group` WHERE `idproduct_group`=$idproduct_group LIMIT 1";
+			if(mysql_query($qry_product_group_del,$this->db_link)){
+				$path_group_dir=$this->path_image_product_base()."/".$product_group_description;
+				if(file_exists($path_group_dir)){
+					if(!delTree($path_group_dir))
+						$del_failed=true;
+				}
+				$ret_arr=array("success"=>true,"message"=>$product_group_description);
+			}else{
+				$del_failed=true;
+				$ret_arr=array("success"=>false,"message"=>"Error when trying to edit product group:".mysql_error());
+			}
+			if($del_failed)
+				mysql_query("ROLLBACK",$this->db_link);
+			else
+				mysql_query("COMMIT",$this->db_link);
+			return $ret_arr;
+		}
 	}
 ?>

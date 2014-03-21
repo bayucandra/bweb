@@ -1,0 +1,14 @@
+<?php
+	//ob_start();
+	ini_set("display_errors","off");
+	include("../../../config.php");
+	include("../../../include/php/functions/debugging.php");
+	include("../../../include/php/functions/general.php");
+	require_once("../../../include/php/classes/bextjs.php");
+	require_once("../../../include/php/connect/database.php");
+	$OBextJs=new BExtJs($db_link);
+	log_insert($db_link,"Test");
+// 	echo $OBextJs->product_list();
+	//dump_data(print_r($_GET,true),"debug_product_list.txt");
+	//ob_end_clean();
+?>

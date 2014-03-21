@@ -1,4 +1,0 @@
- 
-<br />
-<b>Warning</b>:  imagejpeg(../../../images/products/Living Room/Japanese Style 003.jpg): failed to open stream: No such file or directory in <b>/media/sda3/Projects/Web/bamboo/include/php/functions/pic.php</b> on line <b>57</b><br />
-{success:false, message:"Error when try creating uploaded image to the server"}

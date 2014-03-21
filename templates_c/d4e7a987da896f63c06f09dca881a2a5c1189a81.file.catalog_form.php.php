@@ -1,6 +1,6 @@
-<?php /* Smarty version Smarty-3.1.14, created on 2014-03-15 14:01:42
+<?php /* Smarty version Smarty-3.1.14, created on 2014-03-20 09:40:03
          compiled from "./tpl/theme1/catalog_form.php" */ ?>
-<?php /*%%SmartyHeaderCode:16448609185323fad6b76ad6-94252218%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+<?php /*%%SmartyHeaderCode:827576448532a5503e5ea66-26211642%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
   'file_dependency' => 
   array (
@@ -11,7 +11,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
       2 => 'file',
     ),
   ),
-  'nocache_hash' => '16448609185323fad6b76ad6-94252218',
+  'nocache_hash' => '827576448532a5503e5ea66-26211642',
   'function' => 
   array (
   ),
@@ -24,9 +24,9 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   ),
   'has_nocache_code' => false,
   'version' => 'Smarty-3.1.14',
-  'unifunc' => 'content_5323fad6bca641_89640344',
+  'unifunc' => 'content_532a5503f070b4_00243059',
 ),false); /*/%%SmartyHeaderCode%%*/?>
-<?php if ($_valid && !is_callable('content_5323fad6bca641_89640344')) {function content_5323fad6bca641_89640344($_smarty_tpl) {?>	<?php echo $_smarty_tpl->tpl_vars['error_messages']->value;?>
+<?php if ($_valid && !is_callable('content_532a5503f070b4_00243059')) {function content_532a5503f070b4_00243059($_smarty_tpl) {?>	<?php echo $_smarty_tpl->tpl_vars['error_messages']->value;?>
 
 	<br /><span class="ftimes f 13" style="margin-top:10px;">Please fill form below in order to receive copy of our catalog. The fields with asterisk marks <span class="fred">(*)</span> are required to be filled.</span>
 	<form action="<?php echo $_smarty_tpl->tpl_vars['php_self']->value;?>

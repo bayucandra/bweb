@@ -77,4 +77,112 @@
 			date_default_timezone_set($p_time_zone);
 		}
 	}
+	function log_insert($p_db,$p_log_str){
+		$log_str=substr(mysql_real_escape_string($p_log_str),0,253);
+		$current_date=new DateTime();
+		$current_date_str=$current_date->format("Y-m-d H:i:s");
+		
+		$qry_str_log="INSERT INTO `logs`(`date`,`message`)VALUES('$current_date_str','$log_str')";
+		$res_log=mysql_query($qry_str_log,$p_db);
+	}
+	function delTree($dir) {
+		$files = array_diff(scandir($dir), array('.','..'));
+		foreach ($files as $file) {
+			(is_dir("$dir/$file")) ? delTree("$dir/$file") : unlink("$dir/$file");
+		}
+		return rmdir($dir);
+	} 
+	//BEGIN URL FUNCTIONS==================================
+	function path_base_script(){
+		$script_file_name=$_SERVER['SCRIPT_FILENAME'];
+		$last_hash_pos=strrpos($script_file_name,'/');
+		$path_base=substr($script_file_name,0,$last_hash_pos);
+		return $path_base;
+	}
+	function url_base($p_no_com_protocol=false){
+		$ret="";
+		if($p_no_com_protocol)$ret=$_SERVER["HTTP_HOST"].url_dir_base();
+		else $ret=COM_PROTOCOL.$_SERVER["HTTP_HOST"].url_dir_base();
+		return $ret;
+	}
+	function url_dir_base($p_no_first_slash=false){
+		$str_php_self=$_SERVER['PHP_SELF'];
+		$str_self_trim=substr($str_php_self,1,strlen($str_php_self)-1);
+		$exp_self_trim=explode("/",$str_self_trim);
+		$dir_base="";
+		$count_exp_self_trim=count($exp_self_trim);
+		if($count_exp_self_trim>1){
+			for($i=0;$i<$count_exp_self_trim-1;$i++){
+				if(!(($i==0)&&$p_no_first_slash))$dir_base.='/';
+				$dir_base.=$exp_self_trim[$i];
+			}
+		}
+		return $dir_base;
+	}
+	function arr_request(){
+		$str_request_uri=$_SERVER['REQUEST_URI'];
+		$str_request_uri_trim=substr($str_request_uri,1,strlen($str_request_uri)-1);
+		$exp_request_uri_trim=explode("/",$str_request_uri_trim);
+		$count_request_uri_trim=count($exp_request_uri_trim);
+		$arr_request=array();
+		for($i=0;$i<$count_request_uri_trim;$i++){
+			$request_val=$exp_request_uri_trim[$i];
+			if(($i==0)&&($request_val==url_dir_base(true)))continue;
+			if($i==$count_request_uri_trim-1)$request_val=preg_replace("/.html$/i","",$request_val);
+			$arr_request[]=$request_val;
+		}
+		return $arr_request;
+	}
+	function array_search_compat($p_key,$p_arr){
+		$res=array_search($p_key,$p_arr);
+		$is_not_found=(is_null($res))||($res===false);
+		if($is_not_found)return false;
+		else return true;
+	}
+	function get_image_upload_error($p_error_no,$p_arr_exception_no=array()){//$p_arr_exception_no is array of exception number.
+	//Return empty if no error
+		if(empty($p_error_no))return "";
+		
+		$image_error="";
+		switch($p_error_no){
+			case '1':
+				if(!array_search_compat($p_error_no,$p_arr_exception_no))
+					$error_msg=$image_error = 'The uploaded file exceeds the upload_max_filesize directive in php.ini';
+				break;
+			case '2':
+				if(!array_search_compat($p_error_no,$p_arr_exception_no))
+					$image_error = 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form';
+				break;
+			case '3':
+				if(!array_search_compat($p_error_no,$p_arr_exception_no))
+					$image_error = 'The uploaded file was only partially uploaded';
+				break;
+			case '4':
+				if(!array_search_compat($p_error_no,$p_arr_exception_no))
+					$image_error = 'No file was uploaded.';
+				break;
+
+			case '6':
+				if(!array_search_compat($p_error_no,$p_arr_exception_no))
+					$image_error = 'Missing a temporary folder';
+				break;
+			case '7':
+				if(!array_search_compat($p_error_no,$p_arr_exception_no))
+					$image_error = 'Failed to write file to disk';
+				break;
+			case '8':
+				if(!array_search_compat($p_error_no,$p_arr_exception_no))
+					$image_error = 'File upload stopped by extension';
+				break;
+			case '999':
+				if(!array_search_compat($p_error_no,$p_arr_exception_no))
+					$image_error = "Unknown error of image";
+				break;
+			default:
+				$image_error = "";
+				break;
+		}
+		return $image_error;
+	}
+	//END URL FUNCTIONS*************************
 ?>

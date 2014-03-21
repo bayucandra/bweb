@@ -1,13 +1,12 @@
 <?php
+define("CONF_PATH_RELATIVE",'.');
 require("config.php");
-require("include/php/functions/general.php");
 require('include/php/connect/database.php');
 require("include/php/classes/bviews.php");
 
 b_set_time_zone("Asia/Jakarta");
 $bviews=new BViews($db_link);
-$arr_request=$bviews->arr_request();
-
+$arr_request=arr_request();
 switch($arr_request[0]){
 	case "":
 		$bviews->show_header("Home");//HEADER-----------------------------------

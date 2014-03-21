@@ -26,7 +26,7 @@ Ext.onReady(function(){
 		var form=slider_form.getForm();
 		if(form.isValid()){
 			form.submit({
-				url:'extjsinc/php/slider-upload.php',
+				url:'extjsinc/php/act.php?act=slider-upload',
 				waitMsg:'Submitting Slider...',
 				success: function(fp, o) {
 					Ext.Msg.alert('Upload Success', slider_tpl_success.apply(o.result));
@@ -99,33 +99,35 @@ Ext.onReady(function(){
 			});
 		}//END CREATING WINDOW AND FORM*************************************
 		
-		if(btn=='yes'){
+		if(btn=='yes'){//If delete button command confirmed by click "Yes"
 			win_slider_input.down('form').getForm().setValues({input_mode:'delete'});
 			win_slider_input.down('form').getForm().setValues({last_file_name:selected_slider.get('name')});
 			submitFormSlider(btn);
 			//Ext.Msg.alert("test",win_slider_input.down('form').down('button#slider-btn-submit').getId());
 			//win_slider_input.down('form').down('button#slider-btn-submit').dom.Click();
 		}else{
-			var btn_id=btn.getId();
-			if(btn_id=="slide_new"){//If New Input
-				win_slider_input.setTitle("New Slider");
-				win_slider_input.down('form').getForm().reset();
-				win_slider_input.down('form').getForm().setValues({input_mode:'new'});
-				
-				win_slider_input.center();
-				win_slider_input.show();
-			}
-			if(btn_id=="slide_edit"){//If Edit Input
-				if(!selected_slider){
-					Ext.Msg.alert("Error!!!","Please select image to edit.");
+			if((btn!='no')&&(btn!=null)&&(typeof(btn)!=='undefined')&&(btn!="")){//If not delete button click on "No" or btn not defined
+				var btn_id=btn.getId();
+				if(btn_id=="slide_new"){//If New Input
+					win_slider_input.setTitle("New Slider");
+					win_slider_input.down('form').getForm().reset();
+					win_slider_input.down('form').getForm().setValues({input_mode:'new'});
+					
+					win_slider_input.center();
+					win_slider_input.show();
 				}
-				win_slider_input.setTitle("Edit Slider");
-				win_slider_input.down('form').getForm().setValues({input_mode:'edit'});
-				win_slider_input.down('form').getForm().setValues({last_file_name:selected_slider.get('name')});
-				win_slider_input.down('form').getForm().setValues({description:selected_slider.get('description')});
-				
-				win_slider_input.center();
-				win_slider_input.show();
+				if(btn_id=="slide_edit"){//If Edit Input
+					if(!selected_slider){
+						Ext.Msg.alert("Error!!!","Please select image to edit.");
+					}
+					win_slider_input.setTitle("Edit Slider");
+					win_slider_input.down('form').getForm().setValues({input_mode:'edit'});
+					win_slider_input.down('form').getForm().setValues({last_file_name:selected_slider.get('name')});
+					win_slider_input.down('form').getForm().setValues({description:selected_slider.get('description')});
+					
+					win_slider_input.center();
+					win_slider_input.show();
+				}
 			}
 			//Ext.Msg.alert("Values:",win_slider_input.down('form').getForm().getValues(true));
 				//Ext.MessageBox.prompt('Status', 'Changes saved successfully.');
@@ -144,7 +146,7 @@ Ext.onReady(function(){
         model: 'ImageModel',
         proxy: {
             type: 'ajax',
-            url: 'extjsinc/php/slider-images.php',
+            url: 'extjsinc/php/act.php?act=slider-list',
             reader: {
                 type: 'json',
                 root: 'images'

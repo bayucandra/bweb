@@ -1,17 +1,17 @@
-<?php /* Smarty version Smarty-3.1.14, created on 2014-03-15 09:40:37
-         compiled from "./tpl/header.php" */ ?>
-<?php /*%%SmartyHeaderCode:16150658095323bda5717ba0-68366037%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+<?php /* Smarty version Smarty-3.1.14, created on 2014-03-20 09:07:08
+         compiled from "/media/sda3/Projects/Web/bamboo/tpl/theme1/header.php" */ ?>
+<?php /*%%SmartyHeaderCode:715713137532a4d4cf15b53-20660350%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
   'file_dependency' => 
   array (
-    '5d6740ef8e582b71c55df217347013bf7d99c53d' => 
+    'ef07bf0e406e9f8aa6f5430547765ccd8543dd76' => 
     array (
-      0 => './tpl/header.php',
-      1 => 1394158778,
+      0 => '/media/sda3/Projects/Web/bamboo/tpl/theme1/header.php',
+      1 => 1395127358,
       2 => 'file',
     ),
   ),
-  'nocache_hash' => '16150658095323bda5717ba0-68366037',
+  'nocache_hash' => '715713137532a4d4cf15b53-20660350',
   'function' => 
   array (
   ),
@@ -36,17 +36,19 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   ),
   'has_nocache_code' => false,
   'version' => 'Smarty-3.1.14',
-  'unifunc' => 'content_5323bda5a2c606_55402551',
+  'unifunc' => 'content_532a4d4d06ba53_39693571',
 ),false); /*/%%SmartyHeaderCode%%*/?>
-<?php if ($_valid && !is_callable('content_5323bda5a2c606_55402551')) {function content_5323bda5a2c606_55402551($_smarty_tpl) {?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<?php if ($_valid && !is_callable('content_532a4d4d06ba53_39693571')) {function content_532a4d4d06ba53_39693571($_smarty_tpl) {?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb#">
 <head profile="http://gmpg.org/xfn/11">
-<title><?php echo $_smarty_tpl->tpl_vars['site_title']->value;?>
+	<title><?php echo $_smarty_tpl->tpl_vars['site_title']->value;?>
 </title>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
-<meta name="keywords" content="bamboo furniture, bamboo set, bamboo indonesia, bamboo exporter, bamboo dining room, bamboo bedroom, bamboo divider"></meta>
-<meta name="description" content="We have the best quality of bamboo furnitures products. Unique design and strong construction made by experienced crafter in the bamboo crafting for many years. We export to most country in the world."></meta>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+	<meta name="keywords" content="bamboo furniture, bamboo set, bamboo indonesia, bamboo exporter, bamboo dining room, bamboo bedroom, bamboo divider"></meta>
+	<meta name="description" content="We have the best quality of bamboo furnitures products. Unique design and strong construction made by experienced crafter in the bamboo crafting for many years. We export to most country in the world."></meta>
+	<link rel="canonical" href="http://indonesiabamboofurniture.com/" />
+	<link rel="canonical" href="http://indonesiabamboofurniture.com/home.html" />
 	<link rel="stylesheet" href="include/nivo-slider/themes/default/default.css" type="text/css" media="screen" />
 
 	<link rel="stylesheet" href="include/nivo-slider/nivo-slider.css" type="text/css" media="screen" />

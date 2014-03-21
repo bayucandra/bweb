@@ -1,6 +1,6 @@
 <?php
 //1. Init page, 2.Post login, 3. Home page
-require_once("../".PATH_LIBS_SMARTY_OBJ);
+require_once(PATH_LIBS_SMARTY_OBJ);
 class BAdmin extends Smarty{
 	private $db_config;
 	private $db_link;
@@ -132,6 +132,8 @@ class BAdmin extends Smarty{
 						return $this->load_tpl_admin_view_products();
 					case "option":
 						return $this->load_tpl_admin_view_option();
+					case "tools":
+						return $this->load_tpl_admin_view_tools();
 					default:
 						return $this->fetch("admin_view/welcome.php");
 						break;
@@ -154,6 +156,9 @@ class BAdmin extends Smarty{
 	}
 	public function load_tpl_admin_view_option(){
 		return $this->fetch("admin_view/option.php");
+	}
+	public function load_tpl_admin_view_tools(){
+		return $this->fetch("admin_view/tools.php");
 	}
 	public function logged_in(){
 		return isset($_SESSION[$this->session_name]["iduser"]) ? true:false;

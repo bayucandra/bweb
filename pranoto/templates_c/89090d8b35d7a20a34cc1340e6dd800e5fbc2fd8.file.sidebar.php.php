@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.14, created on 2013-10-11 03:34:29
+<?php /* Smarty version Smarty-3.1.14, created on 2014-03-18 11:54:16
          compiled from "./tpl/sidebar.php" */ ?>
 <?php /*%%SmartyHeaderCode:66677421552575855650fe0-35431074%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '89090d8b35d7a20a34cc1340e6dd800e5fbc2fd8' => 
     array (
       0 => './tpl/sidebar.php',
-      1 => 1381462123,
+      1 => 1395118420,
       2 => 'file',
     ),
   ),
@@ -46,6 +46,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
 			<li class="icn_photo"><a href="?act=slider">Slider</a></li>
 			<li class="icn_edit_article"><a href="?act=pages">Pages</a></li>
 			<li class="icn_categories"><a href="?act=products">Products</a></li>
+			<li class="icn_tags"><a href="?act=tools">Tools</a></li>
 		</ul>
 		<h3>Users And Account</h3>
 		<ul class="toggle">

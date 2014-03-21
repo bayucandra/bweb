@@ -4,27 +4,25 @@ require_once(PATH_PHP_MAILER_OBJ);
 
 class BViews extends Smarty{
 	private $db_link,$errors_fields_class_catalog,$errors_fields_message_catalog,$values_last_fields_catalog;//,$success_messages_catalog;
-	private $com_protocol;
 	public $debugging=true;
 	public $caching=false;
 	//public $cache_lifetime=120;
 	public $tpls="";
 	function __construct($p_db_link){
 		parent::__construct();
-		$this->com_protocol="http://";
 		$this->errors_fields_class_catalog=array("fullname"=>"","address"=>"","country"=>"","phone"=>"","email"=>"");
 		$this->errors_fields_message_catalog=array();
 		$this->values_last_fields_catalog=array("title_mr"=>"selected","title_mrs"=>"","fullname"=>"","address"=>"","country"=>"","phone"=>"","fax"=>"","email"=>"","website"=>"");
 		$this->db_link=$p_db_link;
 // 		$this->success_messages_catalog="";
-		$this->setTemplateDir("./".PATH_TEMPLATE);
+		$this->setTemplateDir(PATH_TEMPLATE);
 		$php_self_url=$_SERVER['PHP_SELF']."?".getUrlReconstruct($_GET);
 		$this->assign("php_self",$php_self_url);
 	}
 
 	function first_request(){
 		$page="";
-		$arr_request=$this->arr_request();
+		$arr_request=arr_request();
 		if(isset($arr_request[0])){
 			$page=$arr_request[0];
 		}
@@ -46,12 +44,12 @@ class BViews extends Smarty{
 		$site_title=SITE_TITLE."-".$p_title_str;
 		$this->assign("site_title",$site_title);
 		$this->assign("google_tracking",$google_tracking);
-		$this->assign("url_home",$this->url_base()."/home.html");
-		$this->assign("url_about",$this->url_base()."/page/about.html");
-		$this->assign("url_products",$this->url_base()."/products.html");
-		$this->assign("url_catalog",$this->url_base()."/catalog.html");
-		$this->assign("url_contact",$this->url_base()."/page/contact.html");
-		$this->assign("url_link",$this->url_base()."/page/link.html");
+		$this->assign("url_home",url_base()."/home.html");
+		$this->assign("url_about",url_base()."/page/about.html");
+		$this->assign("url_products",url_base()."/products.html");
+		$this->assign("url_catalog",url_base()."/catalog.html");
+		$this->assign("url_contact",url_base()."/page/contact.html");
+		$this->assign("url_link",url_base()."/page/link.html");
 		//*************END HEAD VARS****************
 		//============BEGIN CSS PATH================
 		$us_paths_css=unserialize(PATH_LIBS_CSS_GENERAL);
@@ -67,7 +65,7 @@ class BViews extends Smarty{
 					$tmp_path_css.="$val_path_css_detail_attr";
 					if($inc_css_detail_attr==0){
 						$tmp_path_css.="=\"";
-						if($val_path_css_detail_attr=="href")$tmp_path_css.=$this->url_base()."/";
+						if($val_path_css_detail_attr=="href")$tmp_path_css.=url_base()."/";
 					}
 					$inc_css_detail_attr++;
 				}
@@ -108,7 +106,7 @@ class BViews extends Smarty{
 			if(substr($val_path_lib_js,0,7)=="COMMENT"){
 				$paths_js.=substr($val_path_lib_js,7,strlen($val_path_lib_js)-7)."\n";
 			}elseif(substr($val_path_lib_js,0,4)=="PATH"){
-				$paths_js.="<script src=\"".$this->url_base()."/".substr($val_path_lib_js,4,strlen($val_path_lib_js)-4)."\"></script>"."\n";
+				$paths_js.="<script src=\"".url_base()."/".substr($val_path_lib_js,4,strlen($val_path_lib_js)-4)."\"></script>"."\n";
 			}
 		}
 		$this->assign("paths_js",$paths_js);
@@ -123,7 +121,7 @@ class BViews extends Smarty{
 	}
 	function show_footer(){
 		//$this->assign("",);
-		$this->assign("url_base",$this->url_base());
+		$this->assign("url_base",url_base());
 		$this->tpls.=$this->fetch("footer.php");
 	}
 	function nivo_img_path(){
@@ -133,7 +131,7 @@ class BViews extends Smarty{
 		while($fa_slider=mysql_fetch_assoc($res_nivo)){
 			$slider_filename=$fa_slider["filename"];
 			$description=$fa_slider["description"];
-			$nivo_images.="<img src=\"".$this->url_base()."/image-slider.php?sz=-1&&fname=$slider_filename&&dmy=Bamboo set\" data-thumb=\"image-slider.php?sz=-1&&fname=$slider_filename\" alt=\"$description\" title=\"$description\"/>";
+			$nivo_images.="<img src=\"".url_base()."/image-slider.php?sz=-1&&fname=$slider_filename&&dmy=Bamboo set\" data-thumb=\"image-slider.php?sz=-1&&fname=$slider_filename\" alt=\"$description\" title=\"$description\"/>";
 		}
 
 		return $nivo_images;
@@ -164,11 +162,11 @@ class BViews extends Smarty{
 			if($i==$total_record-1)
 				$margin_class=" margin_last";
 			$ret.="
-				<a href=\"".$this->url_base()."/products/".$group_name.".html\" class=\"sh$margin_class\">
+				<a href=\"".url_base()."/products/".$group_name.".html\" class=\"sh$margin_class\">
 					
 					<table>
 					<tr><td valign=\"middle\" align=\"center\">
-						<img src=\"".$this->url_base()."/imagep.php?gname=$group_name&&pname=$product_name&&sz=155&&dmy=Bamboo furniture\" alt=\"Bamboo $group_name > $product_name\" />
+						<img src=\"".url_base()."/imagep.php?gname=$group_name&&pname=$product_name&&sz=155&&dmy=Bamboo furniture\" alt=\"Bamboo $group_name > $product_name\" />
 					</td></tr>
 					</table>
 					
@@ -185,12 +183,12 @@ class BViews extends Smarty{
 		
 		$product_group_html="";
 		$product_list_html="";
-		$arr_request=$this->arr_request();
+		$arr_request=arr_request();
 		if(isset($arr_request[1])){
 			$category=urldecode($arr_request[1]);
 			$arr_loc_product_list=array(
-				array("type"=>"root","url"=>$this->url_base()."/home.html","text"=>"Home"),
-				array("type"=>"active","url"=>$this->url_base()."/products.html","text"=>"Product Categories"),
+				array("type"=>"root","url"=>url_base()."/home.html","text"=>"Home"),
+				array("type"=>"active","url"=>url_base()."/products.html","text"=>"Product Categories"),
 				array("type"=>"current","url"=>"","text"=>$category)
 			);
 			$bread_crumb=$this->gen_bread_crumb($arr_loc_product_list,$arr_class,$arr_separator);
@@ -198,7 +196,7 @@ class BViews extends Smarty{
 			$product_list_html=$this->show_product_list($category);
 		}else{
 			$arr_loc_product_group=array(
-				array("type"=>"root","url"=>$this->url_base()."/home.html","text"=>"Home"),
+				array("type"=>"root","url"=>url_base()."/home.html","text"=>"Home"),
 				array("type"=>"current","url"=>"","text"=>"Product Categories")
 			);
 			$bread_crumb=$this->gen_bread_crumb($arr_loc_product_group,$arr_class,$arr_separator);
@@ -233,13 +231,13 @@ class BViews extends Smarty{
 			$ret_product_group.="
 				<div class=\"group\">
 					<div class=\"image\">
-						<a href=\"".$this->url_base()."/products/".$group_name.".html\">
-						<img src=\"".$this->url_base()."/imagep.php?gname=".$group_name."&&pname=_icon&&sz=200\" alt=\"$group_name\" />
+						<a href=\"".url_base()."/products/".$group_name.".html\">
+						<img src=\"".url_base()."/imagep.php?gname=".$group_name."&&pname=_icon&&sz=200\" alt=\"$group_name\" />
 						</a>
 					</div>
 					<div class=\"detail\">
 						<div class=\"category farial f20 fbold\">
-							<a href=\"".$this->url_base()."/products/".$group_name.".html\">
+							<a href=\"".url_base()."/products/".$group_name.".html\">
 								$group_name
 							</a>
 						</div>
@@ -274,7 +272,7 @@ class BViews extends Smarty{
 			$ret_product_list.="
 				<div class=\"thumb $class_border\">
 					<table class=\"$class_margin\"><tr><td valign=\"bottom\" style=\"text-align:center;height:200px;width:200px;\">
-						<img src=\"".$this->url_base()."/imagep.php?gname=".$group_name."&&pname=".$product_name."&&sz=200\" alt=\"$product_name\" />
+						<img src=\"".url_base()."/imagep.php?gname=".$group_name."&&pname=".$product_name."&&sz=200\" alt=\"$product_name\" />
 					</td></tr></table>
 					<div class=\"label_thumb ftahoma f14\">$product_name</div>
 				</div>
@@ -535,49 +533,6 @@ Wisanka - Jepara Branch ";
 		}
 		$ret_bread_crumb.="</div>";//end of <div class=\"".$p_arr_class["wrapper"]."\">
 		return $ret_bread_crumb;
-	}
-	public function path_base_script(){
-		$script_file_name=$_SERVER['SCRIPT_FILENAME'];
-		$last_hash_pos=strrpos($script_file_name,'/');
-		$path_base=substr($script_file_name,0,$last_hash_pos);
-		return $path_base;
-	}
-	function url_base($p_no_com_protocol=false){
-		$ret="";
-		if($p_no_com_protocol)$ret=$_SERVER["HTTP_HOST"].$this->url_dir_base();
-		else $ret=$this->com_protocol.$_SERVER["HTTP_HOST"].$this->url_dir_base();
-		return $ret;
-	}
-	function url_dir_base($p_no_first_slash=false){
-		$str_php_self=$_SERVER['PHP_SELF'];
-		$str_self_trim=substr($str_php_self,1,strlen($str_php_self)-1);
-		$exp_self_trim=explode("/",$str_self_trim);
-		$dir_base="";
-		$count_exp_self_trim=count($exp_self_trim);
-		if($count_exp_self_trim>1){
-			for($i=0;$i<$count_exp_self_trim-1;$i++){
-				if(!(($i==0)&&$p_no_first_slash))$dir_base.='/';
-				$dir_base.=$exp_self_trim[$i];
-			}
-		}
-		return $dir_base;
-	}
-	public function arr_request(){
-		$str_request_uri=$_SERVER['REQUEST_URI'];
-		$str_request_uri_trim=substr($str_request_uri,1,strlen($str_request_uri)-1);
-		$exp_request_uri_trim=explode("/",$str_request_uri_trim);
-		$count_request_uri_trim=count($exp_request_uri_trim);
-		$arr_request=array();
-		for($i=0;$i<$count_request_uri_trim;$i++){
-			$request_val=$exp_request_uri_trim[$i];
-			if(($i==0)&&($request_val==$this->url_dir_base(true)))continue;
-			if($i==$count_request_uri_trim-1)$request_val=preg_replace("/.html$/i","",$request_val);
-			$arr_request[]=$request_val;
-		}
-		return $arr_request;
-	}
-	public function is_https(){
-		$this->com_protocol="https://";
 	}
 	function __destruct(){
 		echo $this->tpls;
