@@ -1,0 +1,1 @@
+<div id="panel-products"></div>

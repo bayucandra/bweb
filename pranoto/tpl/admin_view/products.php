@@ -1,1 +1,1 @@
-<div id="panel-products"></div>
+<div id="panel-products" class="bdata_view"></div>

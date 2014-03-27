@@ -17,14 +17,20 @@ Ext.require([
 ]);
 
 Ext.onReady(function(){
-	var win_product_group_input,product_group_form,tb_products,cmb_product_group,panel_products,win_product_input,product_form,product_view,selected_product,paging_product;
+	var win_product_group_input,product_group_form,selected_product_group;
+	var tb_products,cmb_product_group,panel_products,win_product_input,product_form,product_view,selected_product,paging_product;
 
 	var product_group_model= Ext.define('productGroupModel', {
 		extend: 'Ext.data.Model',
 		fields: [
 			{name: 'idproduct_group'},
 			{name: 'description'},
-			{name: 'parent'}
+			{name: 'parent'},
+			{name: 'img_rand'},
+			{name: 'seo_title'},
+			{name: 'seo_keywords'},
+			{name: 'seo_description'},
+			
 		]
 	});
 	var product_group_store = Ext.create('Ext.data.Store', {
@@ -60,29 +66,65 @@ Ext.onReady(function(){
 			text:'Delete',
 			iconCls:'slider_tb_btn_delete',
 			handler: function(btn){
-				if(grid_products_group.getSelectionModel().hasSelection()){
+				if((!selected_product_group)||(selected_product_group==null)||(typeof(selected_product_group)=='undefined')||(selected_product_group=='')){
+					Ext.Msg.show({
+						title:"Error delete Product Group",
+						msg:"Please select <b>Product Group</b> to delete.",
+						icon:Ext.Msg.ERROR,
+						buttons:Ext.Msg.OK
+					});
+				}else{
 					Ext.Msg.confirm("Confirm","Are you sure to delete selected group?",onProductGroup);
 				}
 			}
 	}]);
-	var grid_products_group=Ext.create('Ext.grid.Panel',{
-		id:'grid_products_group',
-		tbar:tb_products_group,
-		flex:1,
+
+	var view_product_group=Ext.create('Ext.view.View',{
+		id: 'view_product_group',
 		store:product_group_store,
+		tpl:[
+			'<tpl for=".">',
+				'<div class="thumb-wrap" id="{idproduct_group}">',
+					'<div class="thumb"><img src="../imagep.php?gname={description}&&pname=_icon&&sz=150&&rand={img_rand}" title="{description:htmlEncode}"></div>',
+					'<div class="label">',
+						'<div><b>Description:</b> {shortName:htmlEncode}</div>',
+					'</div>',
+				'</div>',
+			'</tpl>',
+			'<div class="x-clear"></div>'
+		],
+		multiSelect: false,
+		trackOver: true,
+		overItemCls: 'x-item-over',
+		itemSelector: 'div.thumb-wrap',
+		emptyText: 'No images to display',
+		plugins: [
+			Ext.create('Ext.ux.DataView.DragSelector', {}),
+			Ext.create('Ext.ux.DataView.LabelEditor', {dataIndex: 'name'})
+		],
+		prepareData: function(data) {
+			Ext.apply(data, {
+				shortName: Ext.util.Format.ellipsis(data.description, 23)
+			});
+			return data;
+		},
+		listeners: {
+			select: function(dv, nodes ){
+				selected_product_group=nodes;
+			}
+		}
+	});
+	var panel_product_group=Ext.create('Ext.panel.Panel',{
+		id:'panel_product_group',
+		title:'Product Group Admin',
+		overflowY:'auto',
 		region:'west',
-		title:'Product Group',
+		flex:2,
+		height:500,
 		split:true,
 		collapsible:true,
-		columns:{
-			defaults:{
-				hideable:false
-			},
-			items:[
-				Ext.create('Ext.grid.RowNumberer'),
-				{text:'Description',width:200,dataIndex:'description'}
-			]
-		}
+		tbar:tb_products_group,
+		items:[view_product_group]
 	});
 	
 	cmb_product_group=Ext.create('Ext.form.field.ComboBox',{
@@ -124,19 +166,31 @@ Ext.onReady(function(){
 			column:2,
 			items:[
 				{
-				id:'product_new',
-				text:'New Product',
-				iconCls:'slider_tb_btn_new',
-				handler:onProduct
+					id:'product_new',
+					text:'New Product',
+					iconCls:'slider_tb_btn_new',
+					handler:onProduct
 				},{
-				id:'product_edit',
-				text:'Edit Product',
-				iconCls:'slider_tb_btn_edit',
-				handler:onProduct
+					id:'product_edit',
+					text:'Edit Product',
+					iconCls:'slider_tb_btn_edit',
+					handler:onProduct
 				},{
 					id:'product_delete',
 					text:'Delete Product',
-					iconCls:'slider_tb_btn_delete'
+					iconCls:'slider_tb_btn_delete',
+					handler:function(btn){
+						if((!selected_product)||(selected_product==null)||(typeof(selected_product)=='undefined')||(selected_product=='')){
+							Ext.Msg.show({
+								title:"Error delete product",
+								msg:"Please select <b>Product</b> to delete.",
+								buttons:Ext.Msg.OK,
+								icon:Ext.Msg.ERROR
+							});
+						}else{
+							Ext.Msg.confirm("Confirm delete","Are you sure to delete selected product?",onProduct);
+						}
+					}
 				}
 			]
 		},{
@@ -160,11 +214,14 @@ Ext.onReady(function(){
 				{name: 'name'},
 				{name: 'idproduct_group'},
 				{name: 'group_name'},
-				{name: 'img_rand'}
+				{name: 'img_rand'},
+				{name: 'seo_title'},
+				{name: 'seo_keywords'},
+				{name: 'seo_description'}
 			]
 		});
 	var product_store = Ext.create('Ext.data.Store', {
-		pageSize: 8,
+		pageSize: 9,
 		model: 'productModel',
 		remoteSort:true,
 		proxy: {
@@ -184,12 +241,12 @@ Ext.onReady(function(){
 	});*/
 	product_store.load();
 	var product_view=Ext.create('Ext.view.View',{
-		id: 'view-product',
+		id: 'view_product',
 		store:product_store,
 		tpl:[
 			'<tpl for=".">',
 				'<div class="thumb-wrap" id="{idproduct}">',
-					'<div class="thumb"><img src="../images/image.php?path=../images/products/{group_name}/{name}.jpg&&sz=150&&rand={img_rand}" title="{name:htmlEncode}"></div>',
+					'<div class="thumb"><img src="../imagep.php?gname={group_name}&&pname={name}&&sz=150&&rand={img_rand}" title="{name:htmlEncode}"></div>',
 					'<div class="label">',
 						'<div><b>Code:</b> {code}</div> <div><b>Name:</b> {shortName:htmlEncode}</div><div><b>Group:</b> {group_name}</div>',
 					'</div>',
@@ -242,7 +299,7 @@ Ext.onReady(function(){
 		renderTo:'panel-products',
 		width:'100%',
 		height:500,
-		items:[grid_products_group,panel_products]
+		items:[panel_product_group,panel_products]
 	});
 // 	panel_products.add(product_view);
 	
@@ -254,7 +311,6 @@ Ext.onReady(function(){
 				autoShow: false,
 				title: '',
 				width: 550,
-				height: 300,
 				minWidth: 300,
 				minHeight: 200,
 				layout: 'fit',
@@ -280,7 +336,8 @@ Ext.onReady(function(){
 							fieldLabel:'Product Group',
 							displayField:'description',
 							valueField:'idproduct_group',
-							emptyText:'Select Group'
+							emptyText:'Select Group',
+							allowBlank:false
 						},
 						{
 							xtype:'textfield',
@@ -290,7 +347,8 @@ Ext.onReady(function(){
 						{
 							xtype:'textfield',
 							name:'product_name',
-							fieldLabel: 'Product Name'
+							fieldLabel: 'Product Name',
+							allowBlank:false
 						},{
 							xtype:'filefield',
 							fieldLabel:'Picture',
@@ -300,6 +358,37 @@ Ext.onReady(function(){
 							buttonConfig: {
 								iconCls: 'upload-icon'
 							}
+						},{
+							xtype:'fieldset',
+							id:'p-seo',
+							name:'p-seo',
+							checkboxToggle:true,
+							collapsed:true,
+							title:'SEO',
+							defaultType:'textareafield',
+							defaults:{
+								anchor:'90%',
+								labelWidth:70,
+								labelStyle:'text-transform:capitalize',
+								height:40
+							},
+							items:[{
+									fieldLabel:'Title',
+									name:'seo_title',
+									enforceMaxLength:true,
+									maxLength:60
+								},{
+									fieldLabel:'Keywords',
+									name:'seo_keywords',
+									enforceMaxLength:true,
+									maxLength:255
+								},{
+									fieldLabel:'Description',
+									name:'seo_description',
+									enforceMaxLength:true,
+									maxLength:255
+								}
+							]
 						}
 					],
 					buttons: [{
@@ -317,95 +406,99 @@ Ext.onReady(function(){
 			});
 		}//END CREATING WINDOW AND FORM*************************************
 		if(btn=='yes'){
-			win_product_input.down('form').getForm().setValues({input_mode:'delete'});
-			win_product_input.down('form').getForm().setValues({last_file_name:selected_slider.get('name')});
-			submitFormSlider(btn);
+			win_product_input.down('form').getForm().setValues({
+				input_mode:'delete',
+				idproduct_group:selected_product.get('idproduct_group'),
+				idproduct:selected_product.get('idproduct'),
+				product_name:selected_product.get('name')
+			});
+			onProductSubmit(btn);
 			//Ext.Msg.alert("test",win_product_input.down('form').down('button#slider-btn-submit').getId());
 			//win_product_input.down('form').down('button#slider-btn-submit').dom.Click();
 		}else{
-			var btn_id=btn.getId();
-			var form=win_product_input.down('form').getForm();
-			if(btn_id=="product_new"){//If New Input
-				win_product_input.setTitle("New Product");
-				form.reset();
-				form.setValues({input_mode:'new',idproduct:-1});
-				
-				win_product_input.center();
-				win_product_input.show();
-			}
-			if(btn_id=="product_edit"){//If Edit Input
-				if(!selected_product){
-					Ext.Msg.show({
-						title:"Error!!!",
-						msg:"Please select product to edit.",
-						buttons:Ext.Msg.OK,
-						icon:Ext.Msg.ERROR
-						
-					});
+			if((btn!='no')&&(btn!=null)&&(btn!='')&&(typeof(btn)!=='undefined')){
+				var btn_id=btn.getId();
+				var form=win_product_input.down('form').getForm();
+				if(btn_id=="product_new"){//If New Input
+					win_product_input.setTitle("New Product");
+					form.reset();
+					form.setValues({input_mode:'new',idproduct:-1});
+					
+					win_product_input.center();
+					win_product_input.show();
 				}
-				win_product_input.setTitle("Edit Slider");
-				form.setValues({
-					input_mode:'edit',
-					idproduct:selected_product.get('idproduct'),
-					idproduct_group:selected_product.get('idproduct_group'),
-					product_code:selected_product.get('code'),
-					product_name:selected_product.get('name')
-				});
-				
-				win_product_input.center();
-				win_product_input.show();
+				if(btn_id=="product_edit"){//If Edit Input
+					if(!selected_product){
+						Ext.Msg.show({
+							title:"Error!!!",
+							msg:"Please select product to edit.",
+							buttons:Ext.Msg.OK,
+							icon:Ext.Msg.ERROR
+							
+						});
+					}else{
+						form.reset();
+						var seo_title=selected_product.get('seo_title');
+						var seo_keywords=selected_product.get('seo_keywords');
+						var seo_description=selected_product.get('seo_description');
+						win_product_input.setTitle("Edit Product");
+						form.setValues({
+							input_mode:'edit',
+							idproduct:selected_product.get('idproduct'),
+							idproduct_group:selected_product.get('idproduct_group'),
+							product_code:selected_product.get('code'),
+							product_name:selected_product.get('name'),
+							seo_title:seo_title,
+							seo_keywords:seo_keywords,
+							seo_description:seo_description
+						});
+						if((seo_title!="")||(seo_keywords!="")||(seo_description!="")){
+							Ext.getCmp('p-seo').expand();
+						}
+						
+						win_product_input.center();
+						win_product_input.show();
+					}
+				}
+				//Ext.Msg.alert("Values:",win_product_input.down('form').getForm().getValues(true));
+					//Ext.MessageBox.prompt('Status', 'Changes saved successfully.');
 			}
-			//Ext.Msg.alert("Values:",win_product_input.down('form').getForm().getValues(true));
-				//Ext.MessageBox.prompt('Status', 'Changes saved successfully.');
 		}
 	}//END function onProduct
 	var product_tpl_success = new Ext.XTemplate(
 		'Product Upload : {message}'
 	);
 	function onProductSubmit(btn){
+// 		Ext.Msg.alert("tst","Test");
 		//var form=this.up('form').getForm();
 		var form=product_form.getForm();
+		
 		if(form.isValid()){
-			var is_valid=true;
-			var error_msg="";
-			var idproduct_group_val=form.getValues(false,false,false,true).idproduct_group;
-			var is_undefined_idproduct_group_val=typeof(idproduct_group_val)==='undefined';
-			if((idproduct_group_val=="")||(idproduct_group_val==null)||(is_undefined_idproduct_group_val==true)){
-				is_valid=false;
-				error_msg=error_msg+"-Please select product group.<br />";
-			}
-			var product_name_val=form.getValues(false,false,false,true).product_name;
-			var is_undefined_product_name_val=typeof(product_name_val)==='undefined';
-			if((product_name_val=="")||(product_name_val==null)||(is_undefined_product_name_val==true)){
-				is_valid=false;
-				error_msg=error_msg+"-Please don't left product name empty.<br />";
-			}
-			if(is_valid==true){
-				form.submit({
-					url:'extjsinc/php/act.php?act=product-upload',
-					waitMsg:'Submitting Product...',
-					success: function(fp, o) {
-						Ext.Msg.alert('Upload Success', product_tpl_success.apply(o.result));
-						if(o.result.input_mode=='new'){
-							product_store.reload({params:{start:0}});
-							product_store.loadPage(1);
-						}else{
-							product_store.reload();
-						}
-						product_view.refresh();
-						win_product_input.hide();
-					},
-					failure:function(){
-						Ext.Msg.alert("Error",Ext.JSON.decode(this.response.responseText).message);
+			form.submit({
+				url:'extjsinc/php/act.php?act=product-upload',
+				waitMsg:'Submitting Product...',
+				success: function(fp, o) {
+					Ext.Msg.alert('Upload Success', product_tpl_success.apply(o.result));
+					if(o.result.input_mode=='new'){
+						product_store.reload({params:{start:0}});
+						product_store.loadPage(1);
+					}else{
+						product_store.reload();
 					}
-				});
-			}else{
-				Ext.Msg.show({
-					title: "Error",
-					msg:"Input not valid: <br />"+error_msg,
-					icon:Ext.Msg.ERROR
-				});
-			}
+					product_view.refresh();
+					win_product_input.hide();
+				},
+				failure:function(){
+					Ext.Msg.alert("Error",Ext.JSON.decode(this.response.responseText).message);
+				}
+			});
+		}else{
+			Ext.Msg.show({
+				title: "Error",
+				msg:"Please fill field red marked.",
+				buttons:Ext.Msg.OK,
+				icon:Ext.Msg.ERROR
+			});
 		}
 	}//END function onProductSubmit
 	function onProductGroup(btn){
@@ -415,10 +508,9 @@ Ext.onReady(function(){
 				closeAction:'hide',
 				autoShow:false,
 				title:'',
-				width:400,
-				height:150,
+				width:450,
 				minWidth:300,
-				minHeight:100,
+				minHeight:140,
 				layout:'fit',
 				plain:true,
 				items:product_group_form=Ext.create('Ext.form.Panel',{
@@ -439,7 +531,47 @@ Ext.onReady(function(){
 						name:'description',
 						fieldLabel:'Description',
 						allowBlank:false
-					}],
+					},{
+						xtype:'filefield',
+						fieldLabel:'Picture',
+						emptyText:'Select an image',
+						name:'product_group_image',
+						buttonText:'',
+						buttonConfig:{
+							iconCls:'upload-icon'
+						}
+					},{
+							xtype:'fieldset',
+							id:'pg-seo',
+							name:'pg-seo',
+							checkboxToggle:true,
+							collapsed:true,
+							title:'SEO',
+							defaultType:'textareafield',
+							defaults:{
+								anchor:'95%',
+								labelWidth:70,
+								labelStyle:'text-transform:capitalize',
+								height:40
+							},
+							items:[{
+									fieldLabel:'Title',
+									name:'seo_title',
+									enforceMaxLength:true,
+									maxLength:60
+								},{
+									fieldLabel:'Keywords',
+									name:'seo_keywords',
+									enforceMaxLength:true,
+									maxLength:255
+								},{
+									fieldLabel:'Description',
+									name:'seo_description',
+									enforceMaxLength:true,
+									maxLength:255
+								}
+							]
+						}],
 					buttons:[{
 							id:'product_group_btn_submit',
 							text: 'Submit',
@@ -454,41 +586,49 @@ Ext.onReady(function(){
 			});
 		}
 		var form=Ext.getCmp('product_group_form').getForm();
-		
-		var product_group_store_sel,idproduct_group_val,description_val;
-		if(grid_products_group.getSelectionModel().hasSelection()){
-			product_group_store_sel=grid_products_group.getSelectionModel().getSelection()[0];
-			idproduct_group_val=product_group_store_sel.get('idproduct_group');
-			description_val=product_group_store_sel.get('description');
-		}
+
 		if(btn=='yes'){
-			form.setValues({input_mode:'delete',idproduct_group:idproduct_group_val,description:'-'});
+			form.setValues({input_mode:'delete',idproduct_group:selected_product_group.get('idproduct_group'),description:'-'});
 			onProductGroupSubmit();
 		}else{
-			var btn_id=btn.getId();
 			if((btn!='no')&&(btn!=null)&&(btn!='')&&(typeof(btn)!=='undefined')){
+				var btn_id=btn.getId();
 				if(btn_id=='product_group_new'){
 					form.reset();
 					form.setValues({input_mode:'new',idproduct_group:-1});
-					win_product_group_input.setTitle("New Product Group");
 
+					win_product_group_input.setTitle("New Product group");
 					win_product_group_input.center();
 					win_product_group_input.show();
 				}
 				if(btn_id=='product_group_edit'){
-					if(grid_products_group.getSelectionModel().hasSelection()){
-						form.setValues({input_mode:'edit',idproduct_group:idproduct_group_val,description:description_val});
-						
-						win_product_group_input.setTitle('Edit Product Group ( '+description_val+' )');
-						win_product_group_input.center();
-						win_product_group_input.show();
-					}else{
+					if((!selected_product_group)||(selected_product_group==null)||(typeof(selected_product_group)=='undefined')||(selected_product_group=='')){
 						Ext.Msg.show({
-							title:"Error",
+							title:"Error edit Product Group",
 							msg:"Please select product group row to edit",
 							icon:Ext.Msg.ERROR,
 							buttons:Ext.Msg.OK
 						});
+					}else{
+						form.reset();
+						var seo_title=selected_product_group.get('seo_title');
+						var seo_keywords=selected_product_group.get('seo_keywords');
+						var seo_description=selected_product_group.get('seo_description');
+						if((seo_title!="")||(seo_keywords!="")||(seo_description!="")){
+							Ext.getCmp('pg-seo').expand();
+						}
+						form.setValues({
+							input_mode:'edit',
+							idproduct_group:selected_product_group.get('idproduct_group'),
+							description:selected_product_group.get('description'),
+							seo_title:seo_title,
+							seo_keywords:seo_keywords,
+							seo_description:seo_description
+						});
+						
+						win_product_group_input.setTitle('Edit Product Group ( '+selected_product_group.get('description')+' )');
+						win_product_group_input.center();
+						win_product_group_input.show();
 					}
 				}
 			}
@@ -501,7 +641,7 @@ Ext.onReady(function(){
 				url:'extjsinc/php/act.php?act=product-group-input',
 				waitMsg:'Submitting Product Group query...',
 				success: function(fp, o){
-// 					Ext.Msg.alert('Product group input success','Product group input:'+o.result.message);
+					Ext.Msg.alert('Product group input success','Product group input:'+o.result.message);
 					product_group_store.reload();
 					win_product_group_input.hide();
 				},

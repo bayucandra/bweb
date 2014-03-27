@@ -106,7 +106,7 @@ Ext.onReady(function(){
 			//Ext.Msg.alert("test",win_slider_input.down('form').down('button#slider-btn-submit').getId());
 			//win_slider_input.down('form').down('button#slider-btn-submit').dom.Click();
 		}else{
-			if((btn!='no')&&(btn!=null)&&(typeof(btn!=='undefined'))&&(btn!="")){//If not delete button click on "No" or btn not defined
+			if((btn!='no')&&(btn!=null)&&(typeof(btn)!=='undefined')&&(btn!="")){//If not delete button click on "No" or btn not defined
 				var btn_id=btn.getId();
 				if(btn_id=="slide_new"){//If New Input
 					win_slider_input.setTitle("New Slider");

@@ -14,7 +14,6 @@
 	//echo '{success:false, message:"Faked error from server", errors:{"photo-path":"The server returned this"}}';
 		
 // 	$OBExtJs->log_insert("Test+".print_r($_REQUEST,true));
-
 	switch($_REQUEST["act"]){
 		case "slider-list":
 			echo $OBExtJs->slider_image_list();
@@ -37,8 +36,8 @@
 			echo $OBExtJs->product_group();
 			break;
 		case "product-upload":
-			$slider_upload_result=$OBExtJs->product_upload("../../../images/products",-1);
-			echo $slider_upload_result;
+			$product_upload_result=$OBExtJs->product_upload();
+			echo $product_upload_result;
 			break;
 		case "product-group-input":
 			echo $OBExtJs->product_group_input();

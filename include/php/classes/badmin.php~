@@ -1,6 +1,5 @@
 <?php
 //1. Init page, 2.Post login, 3. Home page
-define("PATH_RELATIVE",'..');
 require_once(PATH_LIBS_SMARTY_OBJ);
 class BAdmin extends Smarty{
 	private $db_config;
@@ -230,6 +229,23 @@ class BAdmin extends Smarty{
 			return true;
 		}else{
 			return false;
+		}
+	}
+	private function current_page_name(){
+		$act=$_REQUEST['act'];
+		switch($act){
+			case 'pages':
+				return "Pages";
+				break;
+			case 'slider':
+				return "Slider";
+				break;
+			case 'products':
+				return "Products";
+				break;
+			default:
+				return "";
+				break;
 		}
 	}
 	public function __destruct(){

@@ -13,8 +13,9 @@ Ext.onReady(function(){
 	var pageModel= Ext.define('pageModel',{
 		extend: 'Ext.data.Model',
 		fields:[
-			{name:'idpages'},{name:'post_date'},{name:'modified_date'},
-			{name:'content'},{name:'title'},{name:'username'}
+			{name:'idpages'},{name:'post_date'},{name:'modified_date'}
+			,{name:'content'},{name:'title'},{name:'username'}
+			,{name:'seo_title'},{name:'seo_keywords'},{name:'seo_description'}
 		]
 	});
 	var page_store=Ext.create('Ext.data.Store',{
@@ -30,8 +31,8 @@ Ext.onReady(function(){
 	});
     var tabs = Ext.widget('tabpanel', {
         renderTo: 'pages-tab',
-        width: 890,
-		height:950,
+        width: '100%',
+	minHeight:950,
         activeTab: 0,
         defaults :{
             bodyPadding: 10
@@ -79,6 +80,34 @@ Ext.onReady(function(){
 						labelWidth: 70
 					},
 					items:[{
+							xtype:'fieldset',
+							collapsed:false,
+							title:'SEO (Search Engine Optimization)',
+							defaultType:'textareafield',
+							defaults:{
+								anchor:'95%',
+								labelWidth:70,
+								labelStyle:'text-transform:capitalize',
+								height:40
+							},
+							items:[{
+								fieldLabel:'Title',
+								name:'seo_title',
+								enforceMaxLength:true,
+								maxLength:60,
+								value:record.get('seo_title')
+							},{
+								fieldLabel:'Keywords',
+								name:'seo_keywords',
+								enforceMaxLength:true,
+								maxLength:255
+							},{
+								fieldLabel:'Description',
+								name:'seo_description',
+								enforceMaxLength:true,
+								maxLength:255
+							}]
+						},{
 							xtype:'hidden',
 							name:'frm_page_title',
 							value: record.get('title')
@@ -91,11 +120,6 @@ Ext.onReady(function(){
 						}
 					],
 					buttons:[{
-							text:'Edit',
-							handler:function(){
-								CKEDITOR.replace('ckeditor'+record.get('title'),{height:670});
-							}
-						},{
 							text:'Save',
 							handler:submitUpdatePage
 						}
@@ -105,7 +129,14 @@ Ext.onReady(function(){
 			
 		});
 		tabs.add(items);
-		tabs.setActiveTab(0);
+		tabs.on("added",tabs_added());
 	});
-
+	function tabs_added(){
+		tabs.items.each(function(it,idx,ln){
+			var item=tabs.getComponent(idx);
+			tabs.setActiveTab(idx);
+			CKEDITOR.replace('ckeditor'+item.title,{height:670});
+		});
+		tabs.setActiveTab(0);
+	}
 });

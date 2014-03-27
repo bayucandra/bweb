@@ -1,8 +1,8 @@
-.bdata_view .x-panel-body{
+#panel_product_wrapper .x-panel-body{
     background: white;
     font: 11px Arial, Helvetica, sans-serif;
 }
-.bdata_view .thumb{
+#panel_product_wrapper .thumb{
     background: #dddddd;
     padding: 3px;
     padding-bottom: 0;
@@ -10,28 +10,28 @@
 	height:150px;
 	overflow:hidden;
 }
-.bdata_view .label div{
+#panel_product_wrapper .label div{
 	margin-left: 10px;
 }
 
-.x-quirks .bdata_view .thumb {
+.x-quirks #panel_product_wrapper .thumb {
     padding-bottom: 3px;
 	height:150px;
 	overflow:hidden;
 }
 /*
-.bdata_view .thumb img{
+#panel_product_wrapper .thumb img{
     height: 60px;
     width: 80px;
 }*/
-.bdata_view .thumb-wrap{
+#panel_product_wrapper .thumb-wrap{
     float: left;
     margin: 4px;
     margin-right: 0;
     padding: 5px;
 	width:180px;
 }
-.bdata_view .thumb-wrap span {
+#panel_product_wrapper .thumb-wrap span {
     
     display: block;
     overflow: hidden;
@@ -39,22 +39,22 @@
     width: 86px; /* for ie to ensure that the text is centered */
 }
 
-.bdata_view .x-item-over{
+#panel_product_wrapper .x-item-over{
     border:1px solid #dddddd;
     background: #efefef url(over.gif) repeat-x left top;
     padding: 4px;
 }
 
-.bdata_view .x-item-selected{
+#panel_product_wrapper .x-item-selected{
     background: #eff5fb url(selected.gif) no-repeat right bottom;
     border:1px solid #99bbe8;
     padding: 4px;
 }
-.bdata_view .x-item-selected .thumb{
+#panel_product_wrapper .x-item-selected .thumb{
     background:transparent;
 }
 
-.bdata_view .loading-indicator {
+#panel_product_wrapper .loading-indicator {
     font-size:11px;
     background-image:url('images/loading.gif');
     background-repeat: no-repeat;

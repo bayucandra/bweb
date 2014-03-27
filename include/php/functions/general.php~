@@ -139,7 +139,8 @@
 		if($is_not_found)return false;
 		else return true;
 	}
-	function get_image_upload_error($p_error_no,$p_arr_exception_no){//$p_arr_exception_no is array of exception number.
+	//END URL FUNCTIONS*************************
+	function get_image_upload_error($p_error_no,$p_arr_exception_no=array()){//$p_arr_exception_no is array of exception number.
 	//Return empty if no error
 		if(empty($p_error_no))return "";
 		
@@ -184,5 +185,14 @@
 		}
 		return $image_error;
 	}
-	//END URL FUNCTIONS*************************
+	function bmysql_insert_id($p_db_link){
+		$qry_sel_ai="SELECT LAST_INSERT_ID() AS b_insert_id";
+		$res_sel_ai=mysql_query($qry_sel_ai,$this->db_link);
+		if(!$res_sel_ai){
+			return false;
+		}else{
+			$fa_sel_ai=mysql_fetch_assoc($res_sel_ai);
+			return $fa_sel_ai['b_insert_id'];
+		}
+	}
 ?>

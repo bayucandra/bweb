@@ -59,4 +59,6 @@
 	define("PATH_IMAGE_HEADER_SLIDER",PATH_IMAGES."/header-slider");
 	define("PATH_IMAGE_PRODUCTS",PATH_IMAGES."/products");
 	define("SIZE_IMAGE_PRODUCTS",-1);//-1 as will not resize
+	define("SIZE_IMAGE_GROUP",-1);
+	define("TABLE_PREFIX_SEO","seo_");
 ?>

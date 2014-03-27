@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.14, created on 2014-03-18 11:54:16
+<?php /* Smarty version Smarty-3.1.14, created on 2014-03-26 14:05:13
          compiled from "./tpl/sidebar.php" */ ?>
 <?php /*%%SmartyHeaderCode:66677421552575855650fe0-35431074%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '89090d8b35d7a20a34cc1340e6dd800e5fbc2fd8' => 
     array (
       0 => './tpl/sidebar.php',
-      1 => 1395118420,
+      1 => 1395817500,
       2 => 'file',
     ),
   ),
@@ -20,6 +20,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   'variables' => 
   array (
     'admin_full_name' => 0,
+    'current_page_name' => 0,
   ),
   'has_nocache_code' => false,
 ),false); /*/%%SmartyHeaderCode%%*/?>
@@ -30,7 +31,8 @@ $_valid = $_smarty_tpl->decodeProperties(array (
 			<a class="logout_user" href="?admin_logout=1" title="Logout">Logout</a>
 		</div>
 		<div class="breadcrumbs_container">
-			<article class="breadcrumbs"><a href="javascript:void(0);">Admin Page</a> <div class="breadcrumb_divider"></div> <a class="current">Dashboard</a></article>
+			<article class="breadcrumbs"><a href="javascript:void(0);">Admin Page</a> <div class="breadcrumb_divider"></div> <a class="current"><?php echo $_smarty_tpl->tpl_vars['current_page_name']->value;?>
+</a></article>
 		</div>
 	</section><!-- end of secondary bar -->
 	

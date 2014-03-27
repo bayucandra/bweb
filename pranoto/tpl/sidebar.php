@@ -4,7 +4,7 @@
 			<a class="logout_user" href="?admin_logout=1" title="Logout">Logout</a>
 		</div>
 		<div class="breadcrumbs_container">
-			<article class="breadcrumbs"><a href="javascript:void(0);">Admin Page</a> <div class="breadcrumb_divider"></div> <a class="current">Dashboard</a></article>
+			<article class="breadcrumbs"><a href="javascript:void(0);">Admin Page</a> <div class="breadcrumb_divider"></div> <a class="current">{$current_page_name}</a></article>
 		</div>
 	</section><!-- end of secondary bar -->
 	

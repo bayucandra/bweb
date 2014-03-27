@@ -116,6 +116,7 @@ class BAdmin extends Smarty{
 	public function load_tpl_data_sidebar(){
 		$admin_full_name=$_SESSION[$this->session_name]["first_name"]." ".$_SESSION[$this->session_name]["last_name"];
 		$this->assign("admin_full_name",$admin_full_name);
+		$this->assign("current_page_name",$this->current_page_name());
 		return $this->fetch("sidebar.php");
 	}
 	public function load_tpl_data_admin_view(){
@@ -229,6 +230,23 @@ class BAdmin extends Smarty{
 			return true;
 		}else{
 			return false;
+		}
+	}
+	private function current_page_name(){
+		$act=$_REQUEST['act'];
+		switch($act){
+			case 'pages':
+				return "Pages";
+				break;
+			case 'slider':
+				return "Slider";
+				break;
+			case 'products':
+				return "Products";
+				break;
+			default:
+				return "";
+				break;
 		}
 	}
 	public function __destruct(){
